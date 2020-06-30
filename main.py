@@ -24,15 +24,19 @@ sleep(2)
 
 # loop through the URLs
 people = []
+failed_urls = []
 for url in urls:
     person = Person(url, driver=driver, close_on_complete=False)
-    person_details = [url, person.name, person.experiences[0].institution_name.decode('utf8'),
-                        person.experiences[0].position_title.decode('utf8')]
-    people.append(person_details)
-    person.experiences.clear()
-    sleep(2)
+    try:
+        person_details = [url, person.name, person.experiences[0].institution_name.decode('utf8'),
+                            person.experiences[0].position_title.decode('utf8')]
+        people.append(person_details)
+        person.experiences.clear()
+    except Exception as e:
+        print (person.name, person.experiences)
+        failed_urls.append(url)
 
-print (people)
+    sleep(2)
 
 # write URLs to file
 outfilepath = 'linkedin_urls_scraped.csv'
@@ -41,5 +45,7 @@ with open(outfilepath, 'w', newline='') as csvfile:
                             quotechar='"', quoting=csv.QUOTE_ALL)
     for person in people:
         writer.writerow(person)
+
+print("Could not parse ", failed_urls)
 
 driver.quit()
