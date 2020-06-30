@@ -1,0 +1,4 @@
+# Rename file to config.py
+
+EMAIL = "email@domain.com"
+PASSWORD = "password"

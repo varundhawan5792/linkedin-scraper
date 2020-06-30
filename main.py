@@ -2,13 +2,14 @@ from linkedin_scraper import Person, actions
 from selenium import webdriver
 from time import sleep
 import csv
+import config
 
 chromedriver_path = '/usr/local/bin/chromedriver' # Change this to your own chromedriver path
 driver = webdriver.Chrome(executable_path=chromedriver_path)
 
-# linkedin credentials
-email = ""
-password = ""
+# update linkedin credentials in config.py
+email = config.EMAIL
+password = config.PASSWORD
 
 # read URLs from file
 filepath = 'linkedin_urls.csv'
@@ -25,7 +26,8 @@ sleep(2)
 people = []
 for url in urls:
     person = Person(url, driver=driver, close_on_complete=False)
-    person_details = [url, person.name, person.experiences[0].institution_name.decode('utf8'), person.experiences[0].position_title.decode('utf8')]
+    person_details = [url, person.name, person.experiences[0].institution_name.decode('utf8'),
+                        person.experiences[0].position_title.decode('utf8')]
     people.append(person_details)
     person.experiences.clear()
     sleep(2)
