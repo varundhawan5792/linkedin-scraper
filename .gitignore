@@ -1,4 +1,5 @@
 linkedin-scrape/
 *.csv
+*.old
 config.py
 __pycache__/
