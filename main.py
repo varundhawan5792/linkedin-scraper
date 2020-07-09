@@ -53,15 +53,31 @@ invalid_urls = []
 person = None
 for url in urls:
     try:
-        person = Person(url, experiences=[], driver=driver, close_on_complete=False)
+        person = Person(url, driver=driver, close_on_complete=False)
         name = person.name
-        title = person.experiences[0].position_title.decode('utf8') if person.experiences[0].position_title is not None else ''
-        company = person.experiences[0].institution_name.decode('utf8') if person.experiences[0].institution_name is not None else ''
-        person_details = [url, name, company, title]
+
+        # Picking experience
+        if len(person.experiences) > 0:
+            title = person.experiences[0].position_title.decode('utf8') if person.experiences[0].position_title is not None else ''
+            company = person.experiences[0].institution_name.decode('utf8') if person.experiences[0].institution_name is not None else ''
+        else:
+            title = ""
+            company = ""
+
+        # Picking education
+        if len(person.educations) > 0:
+            education = person.educations[0].institution_name.decode('utf8') if person.educations[0].institution_name is not None else ''
+        else:
+            education = ""
+        person_details = [url, name, company, title, education]
+
+        # Writing
         writeScraped(person_details)
-        people.append(person_details)
-        print ("     [OK]", ", ".join([name, company, title]))
+
+        # Cleanup
+        print ("     [OK]", ", ".join([name, company, title, education]))
         person.experiences.clear()
+        person.educations.clear()
 
     except NoSuchElementException as e:
         print ("[Invalid]", url, e)
@@ -72,8 +88,6 @@ for url in urls:
         failed_urls.append(url)
         writeFailed(url)
 
-    # driver.quit()
-    # quit()
     sleep(2)
 
 print("\nCould not parse", len(failed_urls), "profiles")
